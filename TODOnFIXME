@@ -1,0 +1,65 @@
+autosetup.py
+#TODO - make it so all OS can get the correct path
+
+ElpAPI.py
+#TODO - make it so all OS can get the correct path
+#TODO - make it so all OS can get the correct path
+#TODO indentify this last thread!
+#TODO add a method to kill all the threads when killing this object
+#TODO check is this parm exist in the settings dictionary
+
+XMLutils.py
+#TODO return -2 if the parameter couldn't be found
+
+tools.py
+#TODO check existance of both file and dic
+#TODO check existance of both file and lst
+
+telnet.py
+#TODO bind it with the logging system
+
+start.py
+#TODO - make it so all OS can get the correct path
+
+settings.py
+#TODO - add the possibility to extract parameters dict from an XML file and get them from the camera
+#TODO add a pooliong system, which will allow multi-threading
+#FIXME - this only works on the initial ocassion
+#TODO the camera's internal dictionary is feed from the wanted XML settings
+
+recording.py
+#TODO let's extract the container from the filename
+#TODO lentgh should be infinite
+#TODO rel_path should be a relative path from an specific path selected inside the HDD, which is ROOT_PATH
+
+multicam.py
+#TODO not yet, not yet
+#TODO - make it so all OS can get the correct path
+#TODO add a pooliong system, which will allow multi-threading
+#TODO add a pooliong system, which will allow multi-threading
+
+msg.py
+#TODO resolve the self reference
+#TODO test if msg is an array if so, print it accordingly
+
+logCent.py
+# TODO get all the log entries from the owner, by style order
+#TODO get
+
+HDDrec.py
+#TODO - set up a GUI for all this
+#TODO - get it from the GUI
+
+get.py
+#TODO figure out how to retrieve a file through url but not save it.
+#TODO bind it with the logging system
+
+timeframe.py
+#TODO add a randomizer here
+#TODO add the time as a miliseconds counter
+#TODO use unsigned long integers numbers
+#TODO add the time as a miliseconds counter
+#TODO add the time as a miliseconds counter
+#TODO determine the time needed for every new event
+#TODO assing the time needed for every new event
+#TODO what!? just launch the damn thread and nothing else!

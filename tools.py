@@ -12,6 +12,7 @@ import os, subprocess
 import hashlib	#to perform hex md5 checksums
 from xml.dom.minidom import parseString
 import xml.etree.ElementTree as ElTree
+import get
 from msg import print_CASUAL, print_ERROR, print_DEBUG
 
 def get_XML_data(xml_file):
@@ -37,7 +38,8 @@ def get_XML_parameter(xml_file, parameter):
     parameter = int(value.nodeValue)
     return parameter
 
-def XML_2_dict(file, dic):
+def XML_2_dict(self, file, dic):
+    #TODO check existance of both file and dic
     tree = ElTree.parse(file)
     root = tree.getroot()
 
@@ -45,10 +47,15 @@ def XML_2_dict(file, dic):
         for c in child:
             print_DEBUG(self,"c.tag is: " + c.tag + " and c.text is: " + c.text)
             dic[c.tag] = c.text
-            #c.tag  --> parm
-            #c.text --> value
+            """
+            information:
 
-def XML_2_list(file, lst):
+            c.tag  --> parm 
+            c.text --> value
+            """
+
+def XML_2_list(self, file, lst):
+    #TODO check existance of both file and lst
     tree = ElTree.parse(file)
     root = tree.getroot()
     i = 0
@@ -66,13 +73,34 @@ def wget_download (self,command,destPath):
     subprocess.call(command,shell=True)
     return 1
 
-def camera_wget_download (self, parameterLine,fileName=None):
+def camera_get_download (self, parameterLine, fileName=None):
+    
+    STYLE = 0
 
-    STYLE = 1
-
-    fileName = fileName if fileName is not None else STYLE is 2
+    fileName = fileName if fileName is not None else STYLE is 1
     #fileName = str(fileName) #because the scheme above initializes 'fileName' as a boolean
 
+    url = "http://"+self.HOST+"/parsedit.php?immediate"+parameterLine
+    #print_DEBUG(self,"\nurl is:" + url + "\n") #debug
+    
+    if STYLE is 0:
+        filename = str(fileName)+".xml"
+        #print_DEBUG(self,"\nfilename is:" + filename + "\n") #debug
+    else:
+        filename = None
+    """
+    if filename is None:
+        pass
+    else
+        filename = str(fileName)+".xml"
+        print_DEBUG(self,"\nfilename is:" + filename + "\n") #debug
+    """    
+    newtask = get.get_task (url, filename)
+    self.DOWNLOAD_QUEUE.put(newtask)
+    #self.DOWNLOAD_QUEUE.put(url, filename)
+    #self.DOWNLOAD_QUEUE.join()
+    #self.DOWNLOAD_QUEUE.put(None, None)
+    """
     if STYLE is 1:
         try:
             command = "wget 'http://"+self.HOST+"/parsedit.php?immediate"+parameterLine+"' -O "+str(fileName)+".xml"
@@ -90,7 +118,12 @@ def camera_wget_download (self, parameterLine,fileName=None):
             return 1
         except:
             return -1
+    """
 
 def get_file_MD5checksum (self,filename,path):
     md5Csum = hashlib.md5(file(path+filename).read()).hexdigest()
     return md5Csum
+
+if __name__ == '__main_':
+    print("\nyou attempted to operate this file directly\nbut his file isn't meant to operate on it's own,\n\nplease before proceeding read first the README file.\n")
+#EOF

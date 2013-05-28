@@ -3,13 +3,14 @@
 """
 this file is GPLv3
 
-and was written by Biel Bestue 
+written by Biel B. de Luna 
 inspired partially by Aleksey Rembish example @ https://github.com/don-ramon/colorprint and other examples in forums
 
-v 1.0.1
+v 1.0.2
 """
 
 import time
+import logCent
 class prCol:
 
     STANDARD =  '\033[0m'
@@ -63,18 +64,52 @@ def gatherColor(self): #TODO resolve the self reference
     elif self.MSG_DEVICE_COLOUR is 7:
         return prCol.CYAN
 
-def IPnDATE(self):
-    return prCol.GREEN + "[ " + prCol.BOLD + gatherColor(self) + self.HOST + prCol.GREEN + " @ " + prCol.STANDARD + time.strftime("%H:%M:%S") + prCol.GREEN + " ] "
+def IPnDATE(self, timeHMS):
+    return prCol.GREEN + "[ " + prCol.BOLD + gatherColor(self) + self.HOST + prCol.GREEN + " @ " + prCol.STANDARD + timeHMS + prCol.GREEN + " ] "
 
 def print_ERROR(self, msg):
-    print(IPnDATE(self) + prCol.RED + msg + prCol.STANDARD)
-    #TODO add a logging system so error logs get printed in a file autmatically
+    timeHMS = time.strftime("%H:%M:%S")
+    final_msg = IPnDATE(self, timeHMS) + prCol.RED + msg + prCol.STANDARD
+    #self.ERROR_LOG = self.ERROR_LOG + final_msg + "\n"  
+    print(final_msg)
+    #logCent.logCenter.set_new_entry(self, ERROR, timeHMS, msg)
+    
+def print_DEBUG(self, msg, level=0):
+    level = level if level is not 0 else level is 0
+    timeHMS = time.strftime("%H:%M:%S")
 
-def print_DEBUG(self, msg):
-    if self.MSG_NODEBUG:
+    if self.MSG_DEBUG_LEVEL is -1:
         pass
     else:
-        print(IPnDATE(self) + prCol.MAGENTA + msg + prCol.STANDARD)
+        if self.MSG_DEBUG_LEVEL <= level:
+            
+            #TODO test if msg is an array if so, print it accordingly
+            """
+            if 
+                print(IPnDATE(self))
+                for t in range(msg):
+                    print(prCol.MAGENTA + t + "\n")
+                print(prCol.STANDARD)
+            else:
+            """
+            print(IPnDATE(self, timeHMS) + prCol.MAGENTA + msg + prCol.STANDARD)
+        else:
+            pass
+    #log it anyway
+    #logCent.logCenter.set_new_entry(self, DEBUG, timeHMS, msg) 
 
 def print_CASUAL(self, msg):
-    print(IPnDATE(self) + prCol.BLUE + msg + prCol.STANDARD)
+    timeHMS = time.strftime("%H:%M:%S")
+    print(IPnDATE(self, timeHMS) + prCol.BLUE + msg + prCol.STANDARD)
+    #logCent.logCenter.set_new_entry(self, CASUAL, timeHMS, msg)
+
+def print_WARNING(self, msg):
+    timeHMS = time.strftime("%H:%M:%S")
+    final_msg = IPnDATE(self, timeHMS) + prCol.YELLOW + msg + prCol.STANDARD
+    #self.ERROR_LOG = self.ERROR_LOG + final_msg + "\n"  
+    print(final_msg)
+    #logCent.logCenter.set_new_entry(self, WARNING, timeHMS, msg)
+
+if __name__ == '__main_':
+    print("\nyou attempted to operate this file directly\nbut his file isn't meant to operate on it's own,\n\nplease before proceeding read first the README file.\n")
+#EOF
