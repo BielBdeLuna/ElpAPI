@@ -35,7 +35,8 @@ def setupCamera():
         camera = ElpAPI.core(HOST) #creates camera only if it doesn't exists before
     else:
         print_CASUAL(camera,"'camera' object already created")
-    
+
+
     try:
         tree = ElTree.parse(os.path.join(DESTPATH,"wanted_settings.xml"))
         root = tree.getroot()

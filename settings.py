@@ -10,6 +10,7 @@ v 2.0
 import os, subprocess, telnetlib
 from tools import camera_wget_download
 from msg import print_CASUAL, print_ERROR, print_DEBUG
+import xml.etree.ElementTree as ElTree
 
 def get_string_parameter(self,parameter,destinePath,fileName):
     self.DWN_STATE = True
@@ -57,6 +58,7 @@ def set_dictionary_parameters(self,parameters):
 
 def set_xml_parameters(self,parameters):
     pass #TODO - add the possibility to extract parameters dict from an XML file and set them in the camera
+    
 '''
 def set_dictionary_telNet_parameters(self, parameters):
     self.DWN_STATE = True

@@ -6,7 +6,7 @@ this file is GPLv3
 and was written by Biel Bestue 
 inspired partially by Aleksey Rembish example @ https://github.com/don-ramon/colorprint and other examples in forums
 
-v 1.0
+v 1.0.1
 """
 
 import time
@@ -46,21 +46,21 @@ class prCol:
         self.WHITE = ''
 
 def gatherColor(self): #TODO resolve the self reference
-    if self.MSG_COLOUR is 0:
+    if self.MSG_DEVICE_COLOUR is 0:
         return prCol.WHITE
-    elif self.MSG_COLOUR is 1:
+    elif self.MSG_DEVICE_COLOUR is 1:
         return prCol.GRAY
-    elif self.MSG_COLOUR is 2:
+    elif self.MSG_DEVICE_COLOUR is 2:
         return prCol.RED
-    elif self.MSG_COLOUR is 3:
+    elif self.MSG_DEVICE_COLOUR is 3:
         return prCol.GREEN
-    elif self.MSG_COLOUR is 4:
+    elif self.MSG_DEVICE_COLOUR is 4:
         return prCol.YELLOW
-    elif self.MSG_COLOUR is 5:
+    elif self.MSG_DEVICE_COLOUR is 5:
         return prCol.BLUE
-    elif self.MSG_COLOUR is 6:
+    elif self.MSG_DEVICE_COLOUR is 6:
         return prCol.MAGENTA
-    elif self.MSG_COLOUR is 7:
+    elif self.MSG_DEVICE_COLOUR is 7:
         return prCol.CYAN
 
 def IPnDATE(self):
