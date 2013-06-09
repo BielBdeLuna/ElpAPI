@@ -12,7 +12,8 @@ import os, subprocess
 import hashlib	#to perform hex md5 checksums
 from xml.dom.minidom import parseString
 import xml.etree.ElementTree as ElTree
-import get
+from global_sets import tControl
+import task
 from msg import print_CASUAL, print_ERROR, print_DEBUG
 
 def get_XML_data(xml_file):
@@ -73,33 +74,23 @@ def wget_download (self,command,destPath):
     subprocess.call(command,shell=True)
     return 1
 
-def camera_get_download (self, parameterLine, fileName=None):
+def camera_get_download (self, action, owner, subject, command, fileName=None):
+    #TODO change de parameters so subject and command are an option along parmLine and fileName
     
-    STYLE = 0
+    STYLE = 0 #FIXME haxorz rulezz - this is quite lame! and shows a huge lack of creativity! :)
 
     fileName = fileName if fileName is not None else STYLE is 1
-    #fileName = str(fileName) #because the scheme above initializes 'fileName' as a boolean
 
-    url = "http://"+self.HOST+"/parsedit.php?immediate"+parameterLine
-    #print_DEBUG(self,"\nurl is:" + url + "\n") #debug
-    
     if STYLE is 0:
-        filename = str(fileName)+".xml"
-        #print_DEBUG(self,"\nfilename is:" + filename + "\n") #debug
+        filename = str(fileName)+".xml" #because the hack above initializes filename as a boolean
     else:
         filename = None
-    """
-    if filename is None:
-        pass
-    else
-        filename = str(fileName)+".xml"
-        print_DEBUG(self,"\nfilename is:" + filename + "\n") #debug
-    """    
-    newtask = get.get_task (url, filename)
-    self.DOWNLOAD_QUEUE.put(newtask)
-    #self.DOWNLOAD_QUEUE.put(url, filename)
-    #self.DOWNLOAD_QUEUE.join()
-    #self.DOWNLOAD_QUEUE.put(None, None)
+    
+    global tControl
+
+    newTask = task.task_get (subject, command + parameterLine, filename)
+    tControl.queue_get.put(newTask)
+    tControl.queue_get.join()
     """
     if STYLE is 1:
         try:

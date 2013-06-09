@@ -15,27 +15,34 @@
 import sys
 import threading
 import urllib
-from Queue import Queue
+#from Queue import Queue
 import logging
+from global_sets import tControl
 from msg import print_CASUAL, print_ERROR, print_DEBUG
 
-class get_task:
-    def __init__(self, url_to_retrieve, save_file_name):
-        self.url = url_to_retrieve
-        self.filename = save_file_name
 
-class Downloader(threading.Thread):
-    def __init__(self, queue, owner):
-        threading.Thread.__init__(self)
+
+class Downloader( threading.Thread ):
+    def __init__( self, queue, owner, name ):
+        threading.Thread.__init__( self )
         self.queue = queue
+        self.name = name
+        self.subject = "None"
+        self.command = "None"
+        self.status = "idle"
         self.owner = owner #this allows the thread to remember who called it,
                            #therefore letting the print messages know who did it
 
-    def run(self):
+        tControl.update_listLog( self.name )
+
+    def run( self ):
         while True:
-            #download_url = self.queue.get()
-            
             task = self.queue.get()
+            if task is not None:
+                self.status = "working"
+            else:
+                self.status = "idle"
+                
 
             if not task.url:
                 print_WARNING(self.owner, "ERROR! Cannot download " + task.url + " !" )
@@ -54,16 +61,44 @@ class Downloader(threading.Thread):
                 """
             else:
                 print_DEBUG(self.owner, "downloading the file named " + task.filename + "!")
+                self.subject = task.subject
                 try:
                     urllib.urlretrieve(task.url, filename=task.filename)
+                    
                     print_DEBUG(self.owner, task.filename + " downloaded from " + task.url)
                 except Exception, e:
                     #logging.warn("error downloading %s: %s" % (download_url, e))
                     print_WARNING(self.owner, "error downloading %s: %s" % (download_url, e))
-            print_DEBUG(self.owner,"we don't wait2!") #debug
+                    self.status = "failed"
+                    tControl.update_listLog( self.name )
+            print_DEBUG(self.owner, self.name + "done!") #debug
+            #we don¡t change the subject but we change the status this serves 
+            #the purpose of remainig who we were downloading from
+            self.status = "done"
+            tControl.update_listLog( self.name )
             self.queue.task_done()
 
             #TODO bind it with the logging system
+        """
+        this serves the purpose to control different get systems by 
+        retruning the subject that every get thread is working to.
+
+        this means to which url the get thread is attempting to download from
+
+        it could return "None" in that case the thread is nogt working on anything
+        """
+        def get_subject( self ):
+            return self.subject
+
+        def get_command( self ):
+            return self.command
+    
+        def get_status( self ):
+            return self.status
+
+        def update_dictWork(self):
+            
+            
             
 if __name__ == '__main_':
     print("\nyou attempted to operate this file directly\nbut his file isn't meant to operate on it's own,\n\nplease before proceeding read first the README file.\n")

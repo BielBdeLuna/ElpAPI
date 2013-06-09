@@ -14,6 +14,8 @@ XMLutils.py
 tools.py
 #TODO check existance of both file and dic
 #TODO check existance of both file and lst
+#TODO change de parameters so subject and command are an option along parmLine and fileName
+#FIXME haxorz rulezz - this is quite lame! and shows a huge lack of creativity! :)
 
 telnet.py
 #TODO bind it with the logging system
@@ -63,3 +65,9 @@ timeframe.py
 #TODO determine the time needed for every new event
 #TODO assing the time needed for every new event
 #TODO what!? just launch the damn thread and nothing else!
+
+threadControl.py
+#TODO anounce error
+#TODO print error
+#TODO print error
+#TODO add a check using the logcent data

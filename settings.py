@@ -8,19 +8,21 @@ v 2.0
 """
 
 import os, subprocess, telnetlib, urllib, logging
+from global_sets import tControl
 from tools import camera_get_download, XML_2_dict
 from msg import print_CASUAL, print_ERROR, print_DEBUG
 import xml.etree.ElementTree as ElTree
+import task
 
 def get_string_parameter(self,parameter,destinePath,fileName):
-    self.DWN_STATE = True
     os.chdir(destinePath)
-    camera_get_download(self,parameter,fileName)
-    self.DWN_STATE = False
+    subject = "http://"+self.HOST
+    command = "/parsedit.php?immediate&" + parameter
+    camera_get_download(self, action="get", owner=self, subject=subject, command=command, fileName=fileName)
 
 def get_list_parameters(self,parameters,destinePath,fileName):
-    self.DWN_STATE = True
     os.chdir(destinePath)
+    subject = "http://"+self.HOST
     parmLine="&"
     i = 0
     maxLength = len(parameters)
@@ -28,12 +30,12 @@ def get_list_parameters(self,parameters,destinePath,fileName):
         parmLine = parmLine + parameters[i] + "&"
         i = i + 1
     print_DEBUG(self,"parmLine is:" + parmLine) #debug
-    camera_get_download(self,parmLine,fileName)
-    self.DWN_STATE = False
+    command = "/parsedit.php?immediate" + parmLine
+    camera_get_download(self, action="get", owner=self, subject=subject, command=command, fileName=fileName)
 
 def get_dictionary_parameters(self,parameters,destinePath,fileName):
-    self.DWN_STATE = True
     os.chdir(destinePath)
+    subject = "http://"+self.HOST
     keyList = parameters.keys() # values get ignored and only a key list remains, in order to gather new values
     parmLine="&"
     i = 0
@@ -41,8 +43,9 @@ def get_dictionary_parameters(self,parameters,destinePath,fileName):
     for i in range (maxLength):
         parmLine = parmLine + keyList[i] + "&"
         i = i + 1
-    #print_DEBUG(self,"parmLine is:" + parmLine) #debug
-    camera_get_download(self,parmLine,fileName)
+    print_DEBUG(self,"parmLine is:" + parmLine) #debug
+    command = "/parsedit.php?immediate" + parmLine
+    camera_get_download(self, action="get", owner=self, subject=subject, command=command, fileName=fileName)
     """    
     url = "http://"+self.HOST+"/parsedit.php?immediate"+parmLine
     filename = str(fileName)+".xml"
@@ -59,23 +62,18 @@ def get_dictionary_parameters(self,parameters,destinePath,fileName):
         except Exception, e:
             logging.warn("error downloading %s: %s" % (url, e))
     """ 
-    self.DWN_STATE = False
 
 def get_xml_parameters(self,parameters,destinePath,fileName):
     pass #TODO - add the possibility to extract parameters dict from an XML file and get them from the camera
 
 def set_dictionary_parameters(self,parameters):
-    self.DWN_STATE = True
-    url = "http://"+self.HOST+"/parsedit.php?immediate"
+    subject = "http://"+self.HOST
+    command = "/parsedit.php?immediate"
     parmValStringList = ""
     for key in sorted(parameters.keys()):
         parmValStringList = parmValStringList +"&" + key + "=" + parameters[key]
-    #camera_get_download(self,parmValStringList,None)
-    print_DEBUG(self,"Line sent:" + url + parmValStringList) #debug
-    self.DOWNLOAD_QUEUE.put(url + parmValStringList, None)
-    self.DOWNLOAD_QUEUE.join()
-    #self.DOWNLOAD_QUEUE.put(None, None)
-    self.DWN_STATE = False
+    print_DEBUG(self,"Line sent: " + subject + command + parmValStringList) #debug
+    camera_get_download(self, action="set", owner=self, subject=subject, command=command, fileName=None)
 
 def set_xml_parameters(self, XMLparmFile):
 
@@ -85,6 +83,8 @@ def set_xml_parameters(self, XMLparmFile):
     sendParmsDic = {}
     maxLengthWan = 0
     maxLengthCam = 0
+    subject = "http://"+self.HOST
+    command = "/parsedit.php?immediate"
     
     try:
         tree = ElTree.parse(XMLparmFile)
@@ -104,10 +104,18 @@ def set_xml_parameters(self, XMLparmFile):
 
         get_dictionary_parameters(self,self.SETTINGS_DIC,self.SETTINGS_PATH,"camera_settings")
        
-        #FIXME - this only works on the initial ocassion
+        #FIXME - this only works on the initial ocasion
+        global tControl            
+        """
         while self.DOWNLOAD_QUEUE.get() is not None:
-            timeFrameSystem.wait_for_tick()
-
+        
+            print("waiting waiting waiting")
+            tControl.threadList[0].wait_for_tick()
+            print("this shouldn't be printing")
+        """
+        print("lineal failing") #FIXME erase this debug line
+        return #FIXME erase this debug line
+        
         try:
             tree = ElTree.parse(os.path.join(DESTPATH,"camera_settings.xml"))
             root = tree.getroot()
@@ -152,6 +160,10 @@ def set_xml_parameters(self, XMLparmFile):
 
     if changes:
         set_dictionary_parameters(sendParmsDic)
+        """
+        while ???:
+            wait_next_frame
+        """
         print_CASUAL(self,"All new values uploaded to the camera")
     else:
         print_CASUAL(self,"No values uploaded to the camera")

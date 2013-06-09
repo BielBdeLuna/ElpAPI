@@ -13,11 +13,11 @@ it describes both the method of saving the logs, and the method to display them
 
 v 0.1
 """
-#style possibilities                 
-ERROR   =   0
+#style possibilities  
+DEBUG   =   0
 CASUAL  =   1
-WARNING =   2
-DEBUG   =   3
+WARNING =   2              
+ERROR   =   3
 FREEWILL=   4 #if we detect that the devices reacted and change soemthing on their own
 
 #environment
@@ -34,6 +34,15 @@ class log:
         self.style = style
         self.envirnoment = environment
         self.message = message
+
+class change_state_log(log):
+    def __init__(self, action, subject, command, state):
+        super(Device, self).__init__(owner, time, style, environment, message):
+        self.action = action
+        self.subject = subject
+        self.command = command
+        self.state = state
+        
 
 class logCenter:
     def __init__ (self):

@@ -21,6 +21,7 @@ import threading
 from Queue import Queue
 
 from Devices import Slave
+from global_sets import tControl
 import get, settings, telnet, recording
 from msg import print_CASUAL, print_ERROR, print_DEBUG
 
@@ -71,6 +72,7 @@ class elphelCam(Slave):
         self.AUTO_CONFIG = True
         self.AUTO_EXP_STATE = True #the dafault beheviour
         self.AUTO_WB_STATE = True #the dafault beheviour
+        self.MSG_DEVICE_COLOUR = 0
 
         """
         #try to assing the correct colour to the camera name:
@@ -103,13 +105,20 @@ class elphelCam(Slave):
         self.MSG_DEVICE_COLOUR = colourChosed
         #colour assigned
         """
-
-        self.DOWNLOAD_QUEUE = Queue()
+        #FIXME this shouldn't be here
+        #self.DOWNLOAD_QUEUE = Queue()
         self.DOWNLOAD_LOG = ""
-        self.TNET_COMMANDS_QUEUE = Queue()
+        #self.TNET_COMMANDS_QUEUE = Queue()
         self.TNET_OUTPUT_LOG = ""
-        self.THREADS = []
-    
+
+        #create 4 new threads for get purposes
+        global tControl
+        i = 0
+        while (i <= 3):
+            tName = "get worker_" + str( i )
+            tControl.append_and_start_thread( get.Downloader(queue = tControl.queueGet, name = tName, owner = self), tName )
+            i += 1
+        """
         #self.THREADS.append(telnet.TnetCom(self,self.TNET_COMMANDS_QUEUE))
         #self.THREADS[-1].start()
         #TODO indentify this last thread!
@@ -117,8 +126,8 @@ class elphelCam(Slave):
         self.THREADS.append(get.Downloader(self.DOWNLOAD_QUEUE, self))
         self.THREADS[-1].setDaemon(True)
         self.THREADS[-1].start()
-        self.THREADS[-1].setName("get")
-
+        self.THREADS[-1].setName("getThread")
+        """
         #autosetup the camera
         self.set_custom_XML_settings(os.path.join(self.SETTINGS_PATH, self.SETTINGS_FILE))
 
